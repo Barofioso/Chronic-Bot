@@ -1,5 +1,7 @@
 package com.cbbot.log;
 
+import java.nio.charset.Charset;
+
 import com.cbbot.gui.CBGui;
 
 public class CBLog {
@@ -18,10 +20,10 @@ public class CBLog {
 		}
 		else{
 			if(currentText.length() == 0){
-				this.gui.getTextConsole().setText(message);
+				this.gui.getTextConsole().setText(new String(message.getBytes(), Charset.forName("UTF-8")));
 			}
 			else{
-				this.gui.getTextConsole().setText(currentText + "\n" + message);
+				this.gui.getTextConsole().setText(new String((currentText + "\n" + message).getBytes(), Charset.forName("UTF-8")));
 			}
 		}
 	}

@@ -15,7 +15,7 @@ public class CBBot {
 
 	private final CBInfo info;
 	
-	public CBBot(CBGui gui, boolean debugToFile, boolean serverEvent, boolean channelEvent, boolean TextEvent){
+	public CBBot(CBGui gui, boolean debugToFile, boolean serverEvent, boolean channelEvent, boolean textEvent){
 
 		final TS3Config config = new TS3Config();
 		config.setHost(gui.getTextTs3IP().getText());
@@ -44,11 +44,17 @@ public class CBBot {
 		api.moveClient(this.info.getRegelnChannel().getChannelDatabaseID());
 		
 		//this.api.registerAllEvents();
-		api.registerEvent(TS3EventType.CHANNEL,0);
-		//this.api.registerEvent(TS3EventType.SERVER);
-		api.registerEvent(TS3EventType.TEXT_CHANNEL);
-		api.registerEvent(TS3EventType.TEXT_PRIVATE);
-		api.registerEvent(TS3EventType.TEXT_SERVER);
+		if(serverEvent){
+			api.registerEvent(TS3EventType.SERVER);
+		}
+		if(channelEvent){
+			api.registerEvent(TS3EventType.CHANNEL,0);
+		}
+		if(textEvent){
+			api.registerEvent(TS3EventType.TEXT_CHANNEL);
+			api.registerEvent(TS3EventType.TEXT_PRIVATE);
+			api.registerEvent(TS3EventType.TEXT_SERVER);
+		}
 		
 		api.addTS3Listeners(new CBTS3Listener(this.info));
 		

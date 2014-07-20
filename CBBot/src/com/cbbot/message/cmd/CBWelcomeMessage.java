@@ -1,5 +1,7 @@
 package com.cbbot.message.cmd;
 
+import java.nio.charset.Charset;
+
 import com.cbbot.CBInfo;
 import com.cbbot.message.CBMessage;
 import com.cbbot.user.CBUser;
@@ -22,7 +24,7 @@ public class CBWelcomeMessage extends CBMessage{
 		float serverTC = vsi.getTotalClientConnections();
 		
 		int m = 1;
-String prozent = "";
+		String prozent = "";
 		
 		if(userTC > 0){
 			float tmpE = ((100/serverTC)*userTC);
@@ -55,19 +57,19 @@ String prozent = "";
 		}
 		
 		String message = "\n" +
-				"[B]Sei gegr\u00fcsst " + clientName + "\n" +
-				"Ich bin Chester und wünsche dir einen angenehmen Aufenthalt.[/B] \n\n" +
-				"Du m\u00f6chtest mehr \u00fcber mich wissen? - Dann schreib mir: [b][COLOR=#000000]!hilfe[/COLOR] [COLOR=#aa5500]chester[/COLOR][/b] \n" +
-				"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
-				"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
-				"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
-				"[COLOR=#c75d00][I]Vergiss nicht die [B]Regeln[/B] zu lesen![/I][/COLOR] \n" +
-				"Du warst bereits [B]"+ userTC + "[/B] mal auf " + vsi.getName() + ". \n" +
-				"Dies sind [B]" + prozent + "%[/B] von [B]" + (int)serverTC + "[/B] totalen Verbindungen. \n" +
-				"Es sind zurzeit [B]" + vsi.getClientsOnline() + "[/B] Clients Online \n" +
-				"Deine letzte Verbindung war am  " + info.getApi().getClientInfo(this.getUser().getClientID()).getLastConnectedDate().toString() + "\n";
+					"[B]Sei gegrüsst " + clientName + "\n" +
+					"Ich bin Chester und wünsche dir einen angenehmen Aufenthalt.[/B] \n\n" +
+					"Du möchtest mehr über mich wissen? - Dann schreib mir: [b][COLOR=#000000]!hilfe[/COLOR] [COLOR=#aa5500]chester[/COLOR][/b] \n" +
+					"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
+					"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
+					"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
+					"[COLOR=#c75d00][I]Vergiss nicht die [B]Regeln[/B] zu lesen![/I][/COLOR] \n" +
+					"Du warst bereits [B]"+ userTC + "[/B] mal auf " + vsi.getName() + ". \n" +
+					"Dies sind [B]" + prozent + "%[/B] von [B]" + (int)serverTC + "[/B] totalen Verbindungen. \n" +
+					"Es sind zurzeit [B]" + vsi.getClientsOnline() + "[/B] Clients Online \n" +
+					"Deine letzte Verbindung war am  " + info.getApi().getClientInfo(this.getUser().getClientID()).getLastConnectedDate().toString() + "\n";
 		
-		info.getApi().sendPrivateMessage(this.getUser().getClientID(), message);
+		info.getApi().sendPrivateMessage(this.getUser().getClientID(), new String(message.getBytes(), Charset.forName("UTF-8")));
 		info.getLog().addLogEntry("[Nachricht gesendet] " + "Avatar vom User: " + info.getApi().getClientInfo(this.getUser().getClientID()).getAvatar());
 	}
 }
