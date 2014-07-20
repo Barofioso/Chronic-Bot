@@ -10,14 +10,10 @@ import com.cbbot.CBInfo;
 public class CBGeburtsdatum {
 	
 	private GregorianCalendar geburtsdatum;
-	private CBInfo info;
-	private CBUser user;
 	
 	
 	public CBGeburtsdatum(CBInfo info, String bDay, CBUser user){
-		this.info = info;
-		this.user = user;
-		this.setGeburtsdatum(bDay);
+		this.setGeburtsdatum(info,user,bDay);
 		
 	}
 	/**
@@ -35,9 +31,11 @@ public class CBGeburtsdatum {
 	
 	/**
 	 * Legt das Geburtsdatum fest
+	 * @param user 
+	 * @param info 
 	 * @param datum - String 10.11.1991 || 1991.11.10
 	 */
-	public void setGeburtsdatum(String datum){
+	public void setGeburtsdatum(CBInfo info, CBUser user, String datum){
 		int i = datum.indexOf('.');
 		int day = Integer.parseInt(datum.substring(0,i));
 		int month = Integer.parseInt(datum.substring(i+1,i+3));
@@ -49,45 +47,38 @@ public class CBGeburtsdatum {
 			day = tmp;
 		}
 		this.geburtsdatum = new GregorianCalendar(year,month-1,day);
-		if(!this.checkDB(this.geburtsdatum)){
-			this.updateDB();
+		if(!this.checkDB(info, user, this.geburtsdatum)){
+			this.updateDB(info, user);
 		}
 	}
 
-	private void updateDB() {
-		this.info.getSql().open();
-		this.info.getSql().query("UPDATE account SET bDay = '" + this.formatSqlDate(this.geburtsdatum) + "' WHERE a_ID = " + this.user.getDbID() + ";");
-		this.info.getSql().close();
+	private void updateDB(CBInfo info, CBUser user) {
+		info.getSql().open();
+		info.getSql().query("UPDATE account SET bDay = '" + this.formatSqlDate(this.geburtsdatum) + "' WHERE a_ID = " + user.getDbID() + ";");
+		info.getSql().close();
 	}
 
 	private String formatSqlDate(GregorianCalendar bDay) {
 		return "" + bDay.get(1) + "-" + bDay.get(2) + "-" + bDay.get(5);  
 	}
 
-	private boolean checkDB(GregorianCalendar geburtsdatum) {
-		this.info.getSql().open();
+	private boolean checkDB(CBInfo info, CBUser user, GregorianCalendar geburtsdatum) {
+		info.getSql().open();
 		
-		ResultSet res = this.info.getSql().query("SELECT * FROM account WHERE a_ID = " + user.getDbID() + ";");
+		ResultSet res = info.getSql().query("SELECT * FROM account WHERE a_ID = " + user.getDbID() + ";");
 		
 		try {
 			while(res.next()){
 				if(res.getDate("bDay") != null){
-					this.info.getSql().close();
+					info.getSql().close();
 					return true;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.info.getSql().close();
+		info.getSql().close();
 		return false;
-	}
-
-	public CBInfo getInfo() {
-		return info;
-	}
-	public void setInfo(CBInfo info) {
-		this.info = info;
 	}
 	public GregorianCalendar getGeburtsdatum() {
 		return geburtsdatum;

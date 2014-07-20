@@ -25,7 +25,7 @@ public class CBLobbyTimer extends TimerTask{
 		
 		int channelWUser = 0;
 		for(int i = 0; i < this.info.getLobbyChannel().getSubChannels().size(); i++){
-			if(this.info.getLobbyChannel().getSubChannels().get(i).isUserInChannel() >= 1){
+			if(this.info.getLobbyChannel().getSubChannels().get(i).isUserInChannel(info) >= 1){
 				channelWUser++;
 			}
 		}
@@ -40,8 +40,9 @@ public class CBLobbyTimer extends TimerTask{
 			
 		}
 		else if(this.info.getLobbyChannel().getSubChannels().size() > (channelWUser + 1) && this.info.getLobbyChannel().getSubChannels().size() > 4){
-			this.lobbyEvent.removeLobbyChannel(this.info.getLobbyChannel().getSubChannels().get(this.info.getLobbyChannel().getSubChannels().size()-1));
+			if(!(this.info.getLobbyChannel().getSubChannels().get(this.info.getLobbyChannel().getSubChannels().size()-1).isUserInChannel(info) > 0)){
+				this.lobbyEvent.removeLobbyChannel(this.info.getLobbyChannel().getSubChannels().get(this.info.getLobbyChannel().getSubChannels().size()-1));
+			}
 		}
 	}
-
 }

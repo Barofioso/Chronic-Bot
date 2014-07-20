@@ -25,12 +25,12 @@ public class CBGenderMessage extends CBMessage{
 			if(command.equalsIgnoreCase("!mann")){
 				api.addClientToServerGroup(info.getMannlich().getGroupID(), user.getClientDatabaseID());
 				info.getUserByClientDatabaseID(user.getClientDatabaseID()).addServerGroup(info.getMannlich());
-				info.getUserByClientDatabaseID(user.getClientDatabaseID()).checkACGR();
+				info.getUserByClientDatabaseID(user.getClientDatabaseID()).checkACGR(info);
 			}
 			if(command.equalsIgnoreCase("!frau")){
 				api.addClientToServerGroup(info.getWeiblich().getGroupID(), user.getClientDatabaseID());
 				info.getUserByClientDatabaseID(user.getClientDatabaseID()).addServerGroup(info.getWeiblich());
-				info.getUserByClientDatabaseID(user.getClientDatabaseID()).checkACGR();
+				info.getUserByClientDatabaseID(user.getClientDatabaseID()).checkACGR(info);
 			}
 		}
 		else{

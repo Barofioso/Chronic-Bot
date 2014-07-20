@@ -19,7 +19,6 @@ public class CBChannel {
 	private int channelParentID;
 	private boolean isUserChannel;
 	private ArrayList<CBChannel> subChannels = new ArrayList<CBChannel>();
-	private CBInfo info;
 	
 	/**
 	 * Erstellt einen neuen Channel der kein UserChannel ist
@@ -27,8 +26,7 @@ public class CBChannel {
 	 * @param channelDatabaseID Die Channel TS3 ID
 	 */
 	public CBChannel(CBInfo info, int channelDatabaseID) {
-		this.info = info;
-		this.newCBChannel(channelDatabaseID, false);//Unmöglich zu wissen, da die User Channel nach allen Channeln geladen werden! Deshalb false
+		this.newCBChannel(info, channelDatabaseID, false);//Unmöglich zu wissen, da die User Channel nach allen Channeln geladen werden! Deshalb false
 	}
 	/**
 	 * Erstellt einen neuen Channel der kein UserChannel ist
@@ -37,13 +35,12 @@ public class CBChannel {
 	 * @param isUserChannel Wenn true, dann werden auch die temporären Channel in der Datenbank gespeichert bzw. von der Datenbank geladen!
 	 */
 	public CBChannel(CBInfo info, int channelDatabaseID, boolean isUserChannel){
-		this.info = info;
-		this.newCBChannel(channelDatabaseID, isUserChannel);
+		this.newCBChannel(info, channelDatabaseID, isUserChannel);
 	}
 	
-	private void newCBChannel(int channelDatabaseID, boolean isUserChannel){
+	private void newCBChannel(CBInfo info, int channelDatabaseID, boolean isUserChannel){
 		this.channelDatabaseID = channelDatabaseID;
-		ChannelInfo ci = this.info.getApi().getChannelInfo(channelDatabaseID);
+		ChannelInfo ci = info.getApi().getChannelInfo(channelDatabaseID);
 		this.channelDescription = ci.getDescription();
 		this.channelName = ci.getName();
 		this.channelOrderID = ci.getOrder();
@@ -55,17 +52,17 @@ public class CBChannel {
 		this.isUserChannel = isUserChannel; //Unmöglich zu wissen, da die User Channel nach allen Channeln geladen werden! Deshalb false
 		
 		if(ci.isPermanent()){
-			this.loadChannelID();
+			this.loadChannelID(info);
 		}
 		if(this.isUserChannel){
-			this.loadChannelID();
+			this.loadChannelID(info);
 		}
 	}
 
-	private void loadChannelID() {
+	private void loadChannelID(CBInfo info) {
 		boolean channelInDB = false;
-		this.info.getSql().open();
-		ResultSet res = this.info.getSql().query("SELECT channel_ID, channelDatabaseID FROM channel;");
+		info.getSql().open();
+		ResultSet res = info.getSql().query("SELECT channel_ID, channelDatabaseID FROM channel;");
 		try {
 			while(res.next()){
 				if(res.getInt("channelDatabaseID") == this.channelDatabaseID){
@@ -77,17 +74,17 @@ public class CBChannel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.info.getSql().close();
+		info.getSql().close();
 		//Wenn channel nicht vorhanden ist!
 		if(!channelInDB){
-			this.createDB();
-			this.loadChannelID();
+			this.createDB(info);
+			this.loadChannelID(info);
 		}
 	}
 	
-	private void createDB() {
-		this.info.getSql().open();
-		this.info.getSql().query("INSERT INTO channel("
+	private void createDB(CBInfo info) {
+		info.getSql().open();
+		info.getSql().query("INSERT INTO channel("
 				+ "channelname,channelDatabaseID, channelDescription, channelPassword, channelTopic, channelOrderID, channelParentID)"
 				+ " VALUES ('"
 				+ this.channelName.replace("'", "").trim() + "',"
@@ -97,15 +94,15 @@ public class CBChannel {
 				+ this.channelTopic.replace("'", "").trim() + "',"
 				+ this.channelOrderID + ","
 				+ this.channelParentID + ");");
-		this.info.getSql().close();
+		info.getSql().close();
 		
 	}
 	/**
 	 * Aktualisiert diesen Channel in der Datenbank
 	 */
-	public void updateDB() {
-		this.info.getSql().open();
-		this.info.getSql().query("UPDATE channel SET "
+	public void updateDB(CBInfo info) {
+		info.getSql().open();
+		info.getSql().query("UPDATE channel SET "
 				+ "channelname = '" + this.channelName.replace("'", "").trim() + "',"
 				+ "channelDescription = '" + this.channelDescription.replace("'", "").trim() + "',"
 				+ "channelPassword = '" + this.channelPassword + "',"
@@ -114,7 +111,7 @@ public class CBChannel {
 				+ "channelParentID = " + this.channelParentID + ", "
 				+ "isUserChannel = " + this.isUserChannel + " " 
 				+ "WHERE channelDatabaseID = " + this.channelDatabaseID + ";");
-		this.info.getSql().close();
+		info.getSql().close();
 	}
 
 	public String getChannelDescription() {
@@ -140,11 +137,17 @@ public class CBChannel {
 	public void setChannelTopic(String channelTopic) {
 		this.channelTopic = channelTopic;
 	}
-
+	/**
+	 * Die MySql channelID
+	 * @return channelID von der MySql Datenbank
+	 */
 	public int getChannelID() {
 		return channelID;
 	}
-
+	/**
+	 * Die Teamspeak 3 Channel ID
+	 * @return ChannelID vom Teamspeak 3
+	 */
 	public int getChannelDatabaseID() {
 		return channelDatabaseID;
 	}
@@ -199,10 +202,10 @@ public class CBChannel {
 	/**
 	 * Ladet von diesem Channel all seine Subchannels
 	 */
-	public void loadSubChannel(){
-		for(int i = 0; i < this.info.getChannels().size(); i++){
-			if(this.channelDatabaseID == this.info.getChannels().get(i).getChannelParentID()){
-				this.subChannels.add(this.info.getChannels().get(i));
+	public void loadSubChannel(CBInfo info){
+		for(int i = 0; i < info.getChannels().size(); i++){
+			if(this.channelDatabaseID == info.getChannels().get(i).getChannelParentID()){
+				this.subChannels.add(info.getChannels().get(i));
 			}
 		}
 	}
@@ -210,10 +213,10 @@ public class CBChannel {
 	 * Zählt die User in diesem Channel
 	 * @return Die Anzahl User die sich in diesem Channel aufhalten
 	 */
-	public int isUserInChannel(){
+	public int isUserInChannel(CBInfo info){
 		int counter = 0;
-		for(int i = 0; i < this.info.getUsers().size(); i++){
-			if(this.info.getUsers().get(i).getCurrentChannel() == this.channelDatabaseID){
+		for(int i = 0; i < info.getUsers().size(); i++){
+			if(info.getUsers().get(i).getCurrentChannel() == this.channelDatabaseID){
 				counter++;
 			}
 		}

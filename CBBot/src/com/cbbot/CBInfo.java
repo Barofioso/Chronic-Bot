@@ -28,6 +28,9 @@ public class CBInfo {
 	
 	private ArrayList<CBChannel> channels = new ArrayList<CBChannel>();
 	private ArrayList<CBUserChannel> userChannels = new ArrayList<CBUserChannel>();
+	
+	private CBChannel regelnChannel;
+	
 	private CBChannel lobbyChannel;
 	private CBChannel gameChannel;
 	private CBChannel userChannel;
@@ -304,5 +307,19 @@ public class CBInfo {
 	 */
 	public void setSql(CBMySql sql) {
 		this.sql = sql;
+	}
+
+	/**
+	 * @return the regelnChannel
+	 */
+	public CBChannel getRegelnChannel() {
+		return regelnChannel;
+	}
+
+	/**
+	 * @param regelnChannel the regelnChannel to set
+	 */
+	public void setRegelnChannel(CBChannel regelnChannel) {
+		this.regelnChannel = regelnChannel;
 	}
 }

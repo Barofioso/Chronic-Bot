@@ -37,22 +37,22 @@ public class CBAgeMessage extends CBMessage{
 			if(dJahr >= 18){
 				info.getApi().addClientToServerGroup(info.getPlus18().getGroupID(), user.getClientDatabaseID());
 				user.addServerGroup(info.getPlus18());
-				user.checkACGR();
+				user.checkACGR(info);
 			}
 			else if(dJahr <= 17 && dJahr >= 16){
 				info.getApi().addClientToServerGroup(info.getPlus16().getGroupID(), user.getClientDatabaseID());
 				user.addServerGroup(info.getPlus16());
-				user.checkACGR();
+				user.checkACGR(info);
 			}
 			else if(dJahr <= 15 && dJahr >= 14){
 				info.getApi().addClientToServerGroup(info.getPlus14().getGroupID(), user.getClientDatabaseID());
 				user.addServerGroup(info.getPlus14());
-				user.checkACGR();
+				user.checkACGR(info);
 			}
 			else{// dJahr < 12!
 				info.getApi().addClientToServerGroup(info.getPlus12().getGroupID(), user.getClientDatabaseID());
 				user.addServerGroup(info.getPlus12());
-				user.checkACGR();
+				user.checkACGR(info);
 			}
 		}
 		else{

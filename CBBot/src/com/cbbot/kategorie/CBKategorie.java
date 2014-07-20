@@ -9,17 +9,15 @@ public class CBKategorie {
 
 	private int kID;
 	private String kName;
-	private CBInfo info;
 	
 	public CBKategorie(CBInfo info, String name){
 		this.kName = name;
-		this.info = info;
-		this.loadKID();
+		this.loadKID(info);
 	}
-	private void loadKID() {
+	private void loadKID(CBInfo info) {
 		boolean kategorieInDB = false;
-		this.info.getSql().open();
-		ResultSet res = this.info.getSql().query("SELECT * FROM kategorie;");
+		info.getSql().open();
+		ResultSet res = info.getSql().query("SELECT * FROM kategorie;");
 		try {
 			while(res.next()){
 				if(res.getString("kName").equals(this.kName)){
@@ -31,12 +29,12 @@ public class CBKategorie {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.info.getSql().close();
+		info.getSql().close();
 		if(!kategorieInDB){
-			this.createDB();
-			this.loadKID();
+			this.createDB(info);
+			this.loadKID(info);
 		}
-		this.info.getLog().addLogEntry("Kategorie: " + this.kName + " wurde"
+		info.getLog().addLogEntry("Kategorie: " + this.kName + " wurde"
 				+ " mit dieser ID: " + this.kID + " erfolgreich erstellt");
 		
 		
@@ -53,20 +51,20 @@ public class CBKategorie {
 	public void setkName(String kName) {
 		this.kName = kName;
 	}
-	public void updateDB(){
-		this.info.getSql().open();
-		this.info.getSql().query("UPDATE kategorie SET kName = " + this.kName.trim() + " "
+	public void updateDB(CBInfo info){
+		info.getSql().open();
+		info.getSql().query("UPDATE kategorie SET kName = " + this.kName.trim() + " "
 				+ "WHERE k_ID = " + this.kID + ";");
-		this.info.getSql().close();
+		info.getSql().close();
 		
-		this.info.getLog().addLogEntry("Kategorie: " + this.kName + " wurde"
+		info.getLog().addLogEntry("Kategorie: " + this.kName + " wurde"
 				+ " mit dieser ID: " + this.kID + " erfolgreich aktualisiert");
 	}
-	public void createDB(){
-		this.info.getSql().open();
-		this.info.getSql().query("INSERT INTO kategorie(kName) VALUES ('" + this.kName.trim() + "');");
+	public void createDB(CBInfo info){
+		info.getSql().open();
+		info.getSql().query("INSERT INTO kategorie(kName) VALUES ('" + this.kName.trim() + "');");
 		
-		ResultSet res = this.info.getSql().query("SELECT * FROM kategorie;");
+		ResultSet res = info.getSql().query("SELECT * FROM kategorie;");
 		try {
 			while(res.next()){
 				int id = res.getInt("k_ID");
@@ -78,8 +76,8 @@ public class CBKategorie {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.info.getSql().close();
-		this.info.getLog().addLogEntry("Kategorie: " + this.kName + " wurde"
+		info.getSql().close();
+		info.getLog().addLogEntry("Kategorie: " + this.kName + " wurde"
 				+ " mit dieser ID: " + this.kID + " erfolgreich in der Datenbank"
 				+ " erstellt");
 	}

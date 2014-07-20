@@ -22,7 +22,7 @@ public class CBLobbyEvent extends CBChannelEvent{
 		
 		dChannel.setSuffix((lastLobbyChannel + 1) + "");
 		
-		int channelID = dChannel.createSTNormalChannel(this.getInfo().getLobbyChannel().getSubChannels().get(lastLobbyChannel-1).getChannelDatabaseID() + "", this.getInfo().getLobbyChannel().getChannelDatabaseID() + "");
+		int channelID = dChannel.createSTNormalChannel(this.getInfo(), this.getInfo().getLobbyChannel().getSubChannels().get(lastLobbyChannel-1).getChannelDatabaseID() + "", this.getInfo().getLobbyChannel().getChannelDatabaseID() + "");
 		this.getInfo().getLobbyChannel().getSubChannels().get(lastLobbyChannel-1).setChannelName(dChannel.getMiddleChannelPrefix() + dChannel.getChannelName() + lastLobbyChannel);
 		this.updateChannel(this.getInfo().getLobbyChannel().getSubChannels().get(lastLobbyChannel-1));
 		

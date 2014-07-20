@@ -18,31 +18,29 @@ import com.github.theholywaffle.teamspeak3.api.event.TS3EventType;
 
 public class CBBot {
 
-	private CBGui gui;
 	private CBInfo info;
 	
 	
 	public CBBot(CBGui gui, boolean debugToFile, boolean serverEvent, boolean channelEvent, boolean TextEvent){
 		
-		this.gui = gui;
 		CBLog log = new CBLog(gui);
 		
 		CBMySql sql = new CBMySql();
 		
 		int sqlPort = Integer.parseInt(gui.getInputSQLPort().getText());
 		
-		sql.setIp(this.gui.getInputSQLHost().getText());
+		sql.setIp(gui.getInputSQLHost().getText());
 		sql.setPort(sqlPort);
-		sql.setUser(this.gui.getInputSQLUsername().getText());
-		sql.setPass(this.gui.getInputSQLPasswort().getText());
-		sql.setDatabase(this.gui.getInputSQLDatabase().getText());
+		sql.setUser(gui.getInputSQLUsername().getText());
+		sql.setPass(gui.getInputSQLPasswort().getText());
+		sql.setDatabase(gui.getInputSQLDatabase().getText());
 		
 		final TS3Config config = new TS3Config();
-		config.setHost(this.gui.getTextTs3IP().getText());
+		config.setHost(gui.getTextTs3IP().getText());
 		config.setDebugLevel(Level.ALL);
 		config.setDebugToFile(debugToFile);
 		config.setFloodRate(FloodRate.UNLIMITED);
-		config.setLoginCredentials(this.gui.getInputQueryLoginName().getText(), this.gui.getInputQueryLoginPasswort().getText());
+		config.setLoginCredentials(gui.getInputQueryLoginName().getText(), gui.getInputQueryLoginPasswort().getText());
 		
 		final TS3Query query = new TS3Query(config);
 		query.connect();
@@ -52,13 +50,15 @@ public class CBBot {
 		api.setNickname("Chester"); //Station 99 - PutPutBot
 		//this.api.sendChannelMessage("PutPutBot is online!");
 		
-		this.info = new CBInfo(this.gui, api, log, sql);
+		this.info = new CBInfo(gui, api, log, sql);
 		
 		new CBLoadKategorien(this.info);
 		new CBLoadChannels(this.info);
 		new CBLoadGroups(this.info);
 		new CBLoadUsers(this.info);
 		new CBLoadUserChannel(this.info);
+		
+		api.moveClient(this.info.getRegelnChannel().getChannelDatabaseID());
 		
 		//this.api.registerAllEvents();
 		api.registerEvent(TS3EventType.CHANNEL,0);
@@ -69,13 +69,7 @@ public class CBBot {
 		
 		api.addTS3Listeners(new CBTS3Listener(this.info));
 		
-		new CBLobbyEvent(this.info, 1);
-	}
-	/**
-	 * @return the gui
-	 */
-	public CBGui getGui() {
-		return gui;
+		new CBLobbyEvent(this.info, 5);
 	}
 	/**
 	 * @return the info

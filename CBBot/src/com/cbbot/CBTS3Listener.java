@@ -14,6 +14,7 @@ import com.github.theholywaffle.teamspeak3.api.event.ChannelDeletedEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ChannelDescriptionEditedEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ChannelEditedEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ChannelMovedEvent;
+import com.github.theholywaffle.teamspeak3.api.event.ChannelPasswordChangedEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ClientJoinEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ClientLeaveEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ClientMovedEvent;
@@ -72,7 +73,7 @@ public class CBTS3Listener implements TS3Listener {
 			}
 		}
 		if(!isInList){
-			user.loadPrivateChannels();
+			user.loadPrivateChannels(this.info);
 			this.info.getUsers().add(user);
 		}
 		if(!wm.getUser().isAdmin()){
@@ -137,7 +138,7 @@ public class CBTS3Listener implements TS3Listener {
 			for(int i = 0; i < this.info.getChannels().size(); i++){
 				if(this.info.getChannels().get(i).getChannelDatabaseID() == channel.getChannelParentID()){
 					this.info.getChannels().get(i).getSubChannels().clear();
-					this.info.getChannels().get(i).loadSubChannel();
+					this.info.getChannels().get(i).loadSubChannel(info);
 					break;
 				}
 			}
@@ -170,6 +171,12 @@ public class CBTS3Listener implements TS3Listener {
 
 	public void onChannelMoved(ChannelMovedEvent e) {
 		
+		
+	}
+
+	@Override
+	public void onChannelPasswordChanged(ChannelPasswordChangedEvent e) {
+		// TODO Auto-generated method stub
 		
 	}
 

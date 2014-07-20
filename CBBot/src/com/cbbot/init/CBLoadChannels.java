@@ -25,9 +25,12 @@ public class CBLoadChannels extends CBLoad{
 		}
 		//SubChannels +
 		for(int i = 0; i < info.getChannels().size(); i++){
-			info.getChannels().get(i).loadSubChannel();
+			info.getChannels().get(i).loadSubChannel(info);
 		}
 		for(int i = 0; i < info.getChannels().size(); i++){
+			if(info.getChannels().get(i).getChannelName().contains("=====[ Regeln ]=====")){
+				info.setRegelnChannel(info.getChannels().get(i));
+			}
 			if(info.getChannels().get(i).getChannelName().contains("=====[ Lobby ]=====")){
 				info.setLobbyChannel(info.getChannels().get(i));
 			}

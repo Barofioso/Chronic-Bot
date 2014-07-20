@@ -31,7 +31,6 @@ public class CBUser {
 	private boolean clientInDB = false;
 	private ArrayList<CBUserChannel> privateChannels = new ArrayList<CBUserChannel>();
 	private ArrayList<CBServerGroup> serverGroups = new ArrayList<CBServerGroup>();
-	private CBInfo info;
 	private CBGeburtsdatum geburtsdatum = null;
 	/**
 	 * Erstellt direkt einen kompletten User mit allen Informationen,
@@ -39,10 +38,9 @@ public class CBUser {
 	 * @param clientID - TS3 Flüchtige ID
 	 */
 	public CBUser(CBInfo info, int clientID){
-		this.info = info;
 		this.clientID = clientID;
 		
-		ClientInfo cInfo = this.info.getApi().getClientInfo(clientID);
+		ClientInfo cInfo = info.getApi().getClientInfo(clientID);
 		
 		this.clientDatabaseID = cInfo.getDatabaseId();
 		this.clientUI = cInfo.getUniqueIdentifier();
@@ -55,39 +53,41 @@ public class CBUser {
 		this.currentChannel = cInfo.getChannelId();
 		
 		//this.loadPrivateChannels();//Lade die privaten Channels
-		this.loadDBID();
-		this.loadServerGroups();
-		this.setACGR();
-		this.checkBDay();
+		this.loadDBID(info);
+		this.loadServerGroups(info);
+		this.setACGR(info);
+		this.checkBDay(info);
 		//Ist der User Admin?
-		this.isAdmin = this.checkAdmin();
-		this.updateUser();
+		this.isAdmin = this.checkAdmin(info);
+		this.updateUser(info);
 	}
-	private void checkBDay() {
-		this.info.getSql().open();
-		ResultSet res = this.info.getSql().query("SELECT * FROM account WHERE a_ID = " + this.dbID + ";");
+	private void checkBDay(CBInfo info) {
+		info.getSql().open();
+		ResultSet res = info.getSql().query("SELECT * FROM account WHERE a_ID = " + this.dbID + ";");
 		try {
 			while(res.next()){
 				if(res.getDate("bDay") != null){
 					String bDay = res.getDate("bDay").toString().replace("-", ".").trim();
-					this.geburtsdatum = new CBGeburtsdatum(this.info, bDay, this);
+					this.geburtsdatum = new CBGeburtsdatum(info, bDay, this);
 					//lol
-					this.info.getLog().addLogEntry("Geburtsdatum hinzugefügt: " + this.getGeburtsdatum().getDatum());
+					info.getLog().addLogEntry("Geburtsdatum hinzugefügt: " + this.getGeburtsdatum().getDatum());
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		info.getSql().close();
 		
 	}
 	/**
 	 * Prüft ob der User ein Admin ist
+	 * @param info 
 	 * @return true wenn er die Servergruppe mit der entsprechenden Kategorie hat!
 	 */
-	private boolean checkAdmin() {
+	private boolean checkAdmin(CBInfo info) {
 		for(int i = 0; i < this.getServerGroups().size(); i++){
 			for(int j = 0; j < this.getServerGroups().get(i).getKategorie().size(); j++){
-				if(this.getServerGroups().get(i).getKategorie().get(j).getkID() == this.info.getAdminKat().getkID()){
+				if(this.getServerGroups().get(i).getKategorie().get(j).getkID() == info.getAdminKat().getkID()){
 					return true;
 				}
 			}
@@ -97,14 +97,15 @@ public class CBUser {
 	}
 	/**
 	 * Ladet die ServerGruppen vom User
+	 * @param info 
 	 */
-	private void loadServerGroups() {
-		TS3Api api = this.info.getApi();
+	private void loadServerGroups(CBInfo info) {
+		TS3Api api = info.getApi();
 		List<ServerGroup> serverGroups = api.getServerGroupsByClientId(this.clientDatabaseID);
 		for(int i = 0; i < serverGroups.size(); i++){
-			for(int j = 0; j < this.info.getServerGroups().size(); j++){
-				if(serverGroups.get(i).getId() == this.info.getServerGroups().get(j).getGroupID()){
-					this.serverGroups.add(this.info.getServerGroups().get(j));
+			for(int j = 0; j < info.getServerGroups().size(); j++){
+				if(serverGroups.get(i).getId() == info.getServerGroups().get(j).getGroupID()){
+					this.serverGroups.add(info.getServerGroups().get(j));
 					break;
 				}
 			}
@@ -112,12 +113,13 @@ public class CBUser {
 	}
 	/**
 	 * Ladet die ID von der MysqlDatenbank und setzt diese dem USER falls er vorhanden ist
+	 * @param info 
 	 */
-	private void loadDBID() {
+	private void loadDBID(CBInfo info) {
 		
 		if(!this.clientInDB){
-			this.info.getSql().open();
-			ResultSet res = this.info.getSql().query("SELECT a_ID,clientDatabaseID FROM account WHERE clientDatabaseID = " + this.clientDatabaseID + ";");
+			info.getSql().open();
+			ResultSet res = info.getSql().query("SELECT a_ID,clientDatabaseID FROM account WHERE clientDatabaseID = " + this.clientDatabaseID + ";");
 			try {
 				while(res.next()){
 					if(res.getInt("clientDatabaseID") == this.clientDatabaseID){
@@ -129,21 +131,22 @@ public class CBUser {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			this.info.getSql().close();
+			info.getSql().close();
 		}
 		if(!this.clientInDB){
-			this.createDB();
-			this.loadDBID();
+			this.createDB(info);
+			this.loadDBID(info);
 		}
 		
 	}
 	
 	/**
 	 * Aktualisiert den User in der Datenbank
+	 * @param info 
 	 */
-	public void updateUser() {
-		this.info.getSql().open();
-		this.info.getSql().query("UPDATE account SET "
+	public void updateUser(CBInfo info) {
+		info.getSql().open();
+		info.getSql().query("UPDATE account SET "
 				+ "clientID = "
 				+ this.clientID
 				+ ", clientCountry = '"
@@ -161,16 +164,17 @@ public class CBUser {
 				+ "' WHERE a_ID = "
 				+ this.dbID
 				+ ";");
-		this.info.getSql().close();
+		info.getSql().close();
 		//CBIpAdress ip = new CBIpAdress(this.clientIP);
 		//ip.saveToDB(this);
 	}
 
 	/**
 	 * Erstellt einen neuen Eintrag in der Mysql Tabelle
+	 * @param info 
 	 */
-	private void createDB() {
-		this.info.getSql().open();
+	private void createDB(CBInfo info) {
+		info.getSql().open();
 		String query = "INSERT INTO account("
 				+ "clientID, "
 				+ "clientDatabaseID, "
@@ -201,11 +205,11 @@ public class CBUser {
 				+ "', '"
 				+ this.clientAwayMessage
 				+ "');";
-		this.info.getSql().query(query);
+		info.getSql().query(query);
 		
-		this.info.getLog().addLogEntry("[Client Query] " + query);
+		info.getLog().addLogEntry("[Client Query] " + query);
 		
-		this.info.getSql().close();
+		info.getSql().close();
 		
 	}
 	
@@ -353,51 +357,51 @@ public class CBUser {
 		this.isAdmin = isAdmin;
 	}
 	
-	public void checkACGR(){
+	public void checkACGR(CBInfo info){
 		for(int i = 0; i < this.serverGroups.size(); i++){
-			if(!this.checkACGR(this.serverGroups.get(i))){
-				this.setACGR();
+			if(!this.checkACGR(info ,this.serverGroups.get(i))){
+				this.setACGR(info);
 			}
 		}
 	}
 	
-	private void setACGR() {
+	private void setACGR(CBInfo info) {
 		
 		for(int i = 0; i < this.serverGroups.size(); i++){
-			if(!this.checkACGR(this.serverGroups.get(i))){
-				this.info.getSql().open();
+			if(!this.checkACGR(info, this.serverGroups.get(i))){
+				info.getSql().open();
 				String query = "INSERT INTO acgr(a_ID,g_ID) VALUES (" + this.dbID + "," + this.serverGroups.get(i).getGroupDBID() + ");";
-				this.info.getSql().query(query);
-				this.info.getSql().close();
-				this.info.getLog().addLogEntry("[Der Account hat eine neue ServerGruppe erhalten] " + query);
+				info.getSql().query(query);
+				info.getSql().close();
+				info.getLog().addLogEntry("[Der Account hat eine neue ServerGruppe erhalten] " + query);
 			}
 		}
 		
 	}
-	private boolean checkACGR(CBServerGroup serverGroup){
-		this.info.getSql().open();
-		ResultSet res = this.info.getSql().query("SELECT * FROM acgr WHERE a_ID = " + this.dbID + ";");
+	private boolean checkACGR(CBInfo info, CBServerGroup serverGroup){
+		info.getSql().open();
+		ResultSet res = info.getSql().query("SELECT * FROM acgr WHERE a_ID = " + this.dbID + ";");
 		try {
 			while(res.next()){
 				if(this.dbID == res.getInt("a_ID") && serverGroup.getGroupDBID() == res.getInt("g_ID")){
-					this.info.getSql().close();
+					info.getSql().close();
 					return true;
 				}
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		this.info.getSql().close();
+		info.getSql().close();
 		return false;
 	}
-	public void loadPrivateChannels() {
-		TS3Api api = this.info.getApi();
+	public void loadPrivateChannels(CBInfo info) {
+		TS3Api api = info.getApi();
 		 
 		for(int i = 0; i < info.getUserChannels().size(); i++){
-			List<ChannelGroupClient> channelGroupClients = api.getChannelGroupClientsByChannelId(this.info.getUserChannels().get(i).getChannelDatabaseID());
+			List<ChannelGroupClient> channelGroupClients = api.getChannelGroupClientsByChannelId(info.getUserChannels().get(i).getChannelDatabaseID());
 			for(int j = 0; j < channelGroupClients.size(); j++){
 				if(channelGroupClients.get(j).getClientDatabaseId() == this.clientDatabaseID){
-					this.privateChannels.add(this.info.getUserChannels().get(i));
+					this.privateChannels.add(info.getUserChannels().get(i));
 				}
 			}
 		}
