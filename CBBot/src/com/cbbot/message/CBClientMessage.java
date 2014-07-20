@@ -7,6 +7,7 @@ public class CBClientMessage extends CBMessage{
 
 	public CBClientMessage(CBInfo info, TextMessageEvent e) {
 		super(info, e);
+		info.getLog().addLogEntry("[ClientMessage] - " + e.getMessage());
 	}
 
 }

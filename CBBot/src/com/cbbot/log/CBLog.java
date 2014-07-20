@@ -12,7 +12,17 @@ public class CBLog {
 	
 	public void addLogEntry(String message){
 		String currentText = this.gui.getTextConsole().getText();
-		this.gui.getTextConsole().setText(currentText + "\n" + message);
+		
+		if(currentText.length() > 100000){
+			this.gui.getTextConsole().setText(message);
+		}
+		else{
+			if(currentText.length() == 0){
+				this.gui.getTextConsole().setText(message);
+			}
+			else{
+				this.gui.getTextConsole().setText(currentText + "\n" + message);
+			}
+		}
 	}
-
 }

@@ -7,19 +7,26 @@ import com.cbbot.channel.CBUserChannel;
 import com.cbbot.group.CBChannelGroup;
 import com.cbbot.group.CBServerGroup;
 import com.cbbot.gui.CBGui;
+import com.cbbot.init.CBLoadChannels;
+import com.cbbot.init.CBLoadGroups;
+import com.cbbot.init.CBLoadKategorien;
+import com.cbbot.init.CBLoadUserChannel;
+import com.cbbot.init.CBLoadUsers;
 import com.cbbot.kategorie.CBKategorie;
 import com.cbbot.log.CBLog;
 import com.cbbot.user.CBUser;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 
-public class CBInfo {
+public final class CBInfo {
 
-	private CBGui gui;
-	private TS3Api api;
-	private CBLog log;
-	private CBMySql sql;
+	private final CBGui gui;
+	private final TS3Api api;
+	private final CBLog log;
+	private final CBMySql sql;
+	
 	private ArrayList<CBUser> users = new ArrayList<CBUser>();
 	private ArrayList<CBKategorie> kategorien = new ArrayList<CBKategorie>();
+	
 	private CBKategorie adminKat;
 	private CBKategorie normalKat;
 	
@@ -30,12 +37,11 @@ public class CBInfo {
 	private ArrayList<CBUserChannel> userChannels = new ArrayList<CBUserChannel>();
 	
 	private CBChannel regelnChannel;
-	
 	private CBChannel lobbyChannel;
 	private CBChannel gameChannel;
 	private CBChannel userChannel;
 	private CBChannel afkChannel;
-	private CBChannel defaultChannel;
+	private final CBChannel defaultChannel;
 	
 	private CBServerGroup weiblich;
 	private CBServerGroup mannlich;
@@ -50,6 +56,12 @@ public class CBInfo {
 		this.log = log;
 		this.sql = sql;
 		this.defaultChannel = new CBChannel(this, api.whoAmI().getChannelId());
+		
+		new CBLoadKategorien(this);
+		new CBLoadChannels(this);
+		new CBLoadGroups(this);
+		new CBLoadUsers(this);
+		new CBLoadUserChannel(this);
 	}
 	
 	public ArrayList<CBChannel> getChannels() {
@@ -95,10 +107,6 @@ public class CBInfo {
 	public void setAfkChannel(CBChannel afkChannel) {
 		this.afkChannel = afkChannel;
 	}
-
-	public void setDefaultChannel(CBChannel defaultChannel) {
-		this.defaultChannel = defaultChannel;
-	}
 	
 	public CBGui getGui() {
 		return gui;
@@ -137,10 +145,6 @@ public class CBInfo {
 
 	public ArrayList<CBKategorie> getKategorien() {
 		return kategorien;
-	}
-
-	public void setGui(CBGui gui) {
-		this.gui = gui;
 	}
 
 	public void setUsers(ArrayList<CBUser> users) {
@@ -266,56 +270,30 @@ public class CBInfo {
 		}
 		return null;
 	}
-
 	/**
 	 * @return the api
 	 */
 	public TS3Api getApi() {
 		return api;
 	}
-
-	/**
-	 * @param api the api to set
-	 */
-	public void setApi(TS3Api api) {
-		this.api = api;
-	}
-
 	/**
 	 * @return the log
 	 */
 	public CBLog getLog() {
 		return log;
 	}
-
-	/**
-	 * @param log the log to set
-	 */
-	public void setLog(CBLog log) {
-		this.log = log;
-	}
-
 	/**
 	 * @return the sql
 	 */
 	public CBMySql getSql() {
 		return sql;
 	}
-
-	/**
-	 * @param sql the sql to set
-	 */
-	public void setSql(CBMySql sql) {
-		this.sql = sql;
-	}
-
 	/**
 	 * @return the regelnChannel
 	 */
 	public CBChannel getRegelnChannel() {
 		return regelnChannel;
 	}
-
 	/**
 	 * @param regelnChannel the regelnChannel to set
 	 */

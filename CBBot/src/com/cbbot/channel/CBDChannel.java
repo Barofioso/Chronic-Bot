@@ -7,7 +7,7 @@ import com.github.theholywaffle.teamspeak3.api.ChannelProperty;
 /**
  * 
  * Chronic Bot Default Channel Klasse erstellt neue Channel
- * Der ChannelName  sowie prefix und suffix können gesetzt werden.
+ * Der ChannelName  sowie prefix und suffix k��nnen gesetzt werden.
  * Prefix ist davor, Suffix nach dem ChannelNamen
  *
  * @author D. Lehmann
@@ -104,7 +104,7 @@ public class CBDChannel {
 	}
 	/**
 	 * Erstellt einen normalen Channel mit der order 0 und der parentID
-	 * @param parentID Ã¼bergeordneter Channel
+	 * @param parentID ����bergeordneter Channel
 	 * @return den gerade erstellten Channel als ChannelDatabaseID
 	 */
 	public int createNormalChannel(CBInfo info,String parentID){
@@ -113,7 +113,7 @@ public class CBDChannel {
 	/**
 	 * Erstellt einen normalen Channel mit der order und der parentID
 	 * @param order sortierung
-	 * @param parentID Übergeordneter Channel
+	 * @param parentID ��bergeordneter Channel
 	 * @return den gerade erstellten Channel als ChannelDatabaseID
 	 */
 	public int createNormalChannel(CBInfo info,String order, String parentID){

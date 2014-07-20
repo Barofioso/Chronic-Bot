@@ -2,13 +2,9 @@ package com.cbbot;
 
 import com.cbbot.channel.CBChannel;
 import com.cbbot.channel.CBUserChannel;
-import com.cbbot.message.CBChannelMessage;
-import com.cbbot.message.CBClientMessage;
-import com.cbbot.message.CBServerMessage;
 import com.cbbot.message.cmd.CBCommand;
 import com.cbbot.message.cmd.CBWelcomeMessage;
 import com.cbbot.user.CBUser;
-import com.github.theholywaffle.teamspeak3.api.TextMessageTargetMode;
 import com.github.theholywaffle.teamspeak3.api.event.ChannelCreateEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ChannelDeletedEvent;
 import com.github.theholywaffle.teamspeak3.api.event.ChannelDescriptionEditedEvent;
@@ -24,7 +20,7 @@ import com.github.theholywaffle.teamspeak3.api.event.TextMessageEvent;
 
 public class CBTS3Listener implements TS3Listener {
 
-	private CBInfo info;
+	private final CBInfo info;
 
 	public CBTS3Listener(CBInfo info) {
 		this.info = info;
@@ -36,7 +32,7 @@ public class CBTS3Listener implements TS3Listener {
 			new CBCommand(this.info, e);
 		}
 		
-		if(e.getTargetMode().equals(TextMessageTargetMode.CHANNEL)){
+		/*if(e.getTargetMode().equals(TextMessageTargetMode.CHANNEL)){
 			new CBChannelMessage(this.info, e);
 		}
 		if(e.getTargetMode().equals(TextMessageTargetMode.CLIENT)){
@@ -44,11 +40,12 @@ public class CBTS3Listener implements TS3Listener {
 		}
 		if(e.getTargetMode().equals(TextMessageTargetMode.SERVER)){
 			new CBServerMessage(this.info, e);
-		}
+		}*/
 	}
 
 	public void onClientJoin(ClientJoinEvent e) {
 		CBUser user = new CBUser(this.info, e.getClientId());
+		new CBWelcomeMessage(this.info, user).sendClientWelcomeMessage(this.info);
 		
 		/*if(this.bot.getInfo().getUserGroupByID(user, this.bot.getInfo().getMannlich().getGroupID()) == null &&
 			this.bot.getInfo().getUserGroupByID(user, this.bot.getInfo().getWeiblich().getGroupID()) == null){
@@ -63,25 +60,20 @@ public class CBTS3Listener implements TS3Listener {
 				}
 			}
 		}*/
-		
-		CBWelcomeMessage wm = new CBWelcomeMessage(this.info, user);
+		user.loadPrivateChannels(this.info);
 		boolean isInList = false;
 		for(int i = 0; i < this.info.getUsers().size(); i++){
 			if(this.info.getUsers().get(i).getClientDatabaseID() == user.getClientDatabaseID()){
 				this.info.getUsers().set(i, user);
 				isInList = true;
+				break;
 			}
 		}
 		if(!isInList){
-			user.loadPrivateChannels(this.info);
 			this.info.getUsers().add(user);
 		}
-		if(!wm.getUser().isAdmin()){
-			wm.sendClientWelcomeMessage(this.info);
-		}
-		else{
-			//Admin willkommensnachricht ;D
-			wm.sendClientWelcomeMessage(this.info);
+		if(user.isAdmin()){
+			//new CBWelcomeMessage(this.info, user).sendClientWelcomeMessage(this.info);
 		}
 
 	}
@@ -114,7 +106,9 @@ public class CBTS3Listener implements TS3Listener {
 	public void onClientMoved(ClientMovedEvent e) {
 		for(int i = 0; i < this.info.getUsers().size(); i++){
 			if(this.info.getUsers().get(i).getClientID() == e.getClientId()){
+				this.info.getLog().addLogEntry("[Client before Move] - ChannelID: " + this.info.getUsers().get(i).getCurrentChannel() + " - ClientNickname: " + this.info.getUsers().get(i).getClientNickname());
 				this.info.getUsers().get(i).setCurrentChannel(this.info.getApi().getClientInfo(e.getClientId()).getChannelId());
+				this.info.getLog().addLogEntry("[Client after Move] - ChannelID: " + this.info.getUsers().get(i).getCurrentChannel() + " - ClientNickname: " + this.info.getUsers().get(i).getClientNickname());
 				break;
 			}
 		}
@@ -146,7 +140,7 @@ public class CBTS3Listener implements TS3Listener {
 	}
 
 	public void onChannelDeleted(ChannelDeletedEvent e) {
-		this.info.getLog().addLogEntry("Channel Delete Event - ChannelID:" + e.getChannelId());
+		this.info.getLog().addLogEntry("[Channel Delete Event] - ChannelID: " + e.getChannelId());
 		int channelParentID = 0;
 		for(int i = 0; i < this.info.getChannels().size(); i++){
 			if(this.info.getChannels().get(i).getChannelID() == e.getChannelId()){

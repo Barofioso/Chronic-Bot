@@ -8,7 +8,7 @@ import com.cbbot.channel.CBChannel;
 
 public class CBLobbyTimer extends TimerTask{
 	
-	private CBInfo info;
+	private final CBInfo info;
 	private CBLobbyEvent lobbyEvent;
 
 	public CBLobbyTimer(CBInfo info, CBLobbyEvent cbLobbyEvent, int min){

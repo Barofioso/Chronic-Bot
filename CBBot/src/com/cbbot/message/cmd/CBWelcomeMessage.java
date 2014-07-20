@@ -21,20 +21,43 @@ public class CBWelcomeMessage extends CBMessage{
 		VirtualServerInfo vsi = info.getApi().getServerInfo();
 		float serverTC = vsi.getTotalClientConnections();
 		
-		float tmpE = ((100/serverTC)*userTC);
-		String prozent = "";
-		int count = 0; 
-		while(count < 1){
-			count = (int)(tmpE * 100);
-			prozent += 0;
-		}
-		prozent += "."+count;
+		int m = 1;
+String prozent = "";
 		
+		if(userTC > 0){
+			float tmpE = ((100/serverTC)*userTC);
+			int count = 0;
+			while(count < 1){
+				count = (int)(tmpE * 10 * m);
+				if(count + "".length() <= 9){
+					prozent += 0;
+				}
+				tmpE *= 10;
+				if(prozent.length() <= 1 && count + "".length() <= 9){
+					tmpE /= 10;
+					count /= 10 * m;
+					m *= 10;
+					
+				}
+				if(prozent.length() >= 5){
+					break;
+				}
+			}
+			int lange = prozent.length();
+			prozent = "";
+			for(int i = 0; i < lange; i++){
+				prozent += 0;
+				if(i == 0){
+					prozent += ".";
+				}
+			}
+			prozent += count;
+		}
 		
 		String message = "\n" +
-				"[B]Sei gegrüsst " + clientName + "\n" +
+				"[B]Sei gegr\u00fcsst " + clientName + "\n" +
 				"Ich bin Chester und wünsche dir einen angenehmen Aufenthalt.[/B] \n\n" +
-				"Du möchtest mehr über mich wissen? - Dann schreib mir: [b][COLOR=#000000]!hilfe[/COLOR] [COLOR=#aa5500]chester[/COLOR][/b] \n" +
+				"Du m\u00f6chtest mehr \u00fcber mich wissen? - Dann schreib mir: [b][COLOR=#000000]!hilfe[/COLOR] [COLOR=#aa5500]chester[/COLOR][/b] \n" +
 				"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
 				"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +
 				"==========[COLOR=#ff0000]==========[/COLOR][COLOR=#dcdc27]==========[/COLOR] \n" +

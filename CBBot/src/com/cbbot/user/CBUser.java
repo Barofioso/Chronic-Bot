@@ -68,9 +68,11 @@ public class CBUser {
 			while(res.next()){
 				if(res.getDate("bDay") != null){
 					String bDay = res.getDate("bDay").toString().replace("-", ".").trim();
+					info.getSql().close();
 					this.geburtsdatum = new CBGeburtsdatum(info, bDay, this);
 					//lol
 					info.getLog().addLogEntry("Geburtsdatum hinzugefügt: " + this.getGeburtsdatum().getDatum());
+					
 				}
 			}
 		} catch (SQLException e) {
@@ -125,6 +127,7 @@ public class CBUser {
 					if(res.getInt("clientDatabaseID") == this.clientDatabaseID){
 						this.dbID = res.getInt("a_ID");
 						this.clientInDB = true;
+						info.getSql().close();
 						break;
 					}
 				}

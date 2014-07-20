@@ -68,7 +68,9 @@ public class CBChannel {
 				if(res.getInt("channelDatabaseID") == this.channelDatabaseID){
 					this.channelID = res.getInt("channel_ID");
 					res.afterLast();
+					info.getSql().close();
 					channelInDB = true;
+					break;
 				}
 			}
 		} catch (SQLException e) {
