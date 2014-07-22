@@ -16,13 +16,15 @@ import com.cbbot.kategorie.CBKategorie;
 import com.cbbot.log.CBLog;
 import com.cbbot.user.CBUser;
 import com.github.theholywaffle.teamspeak3.TS3Api;
+import com.github.theholywaffle.teamspeak3.TS3Query;
 
 public final class CBInfo {
 
 	private final CBGui gui;
-	private final TS3Api api;
+	private TS3Api api;
 	private final CBLog log;
 	private final CBMySql sql;
+	private final TS3Query query;
 	
 	private ArrayList<CBUser> users = new ArrayList<CBUser>();
 	private ArrayList<CBKategorie> kategorien = new ArrayList<CBKategorie>();
@@ -50,11 +52,12 @@ public final class CBInfo {
 	private CBServerGroup plus14;
 	private CBServerGroup plus12;
 
-	public CBInfo(CBGui gui, TS3Api api, CBLog log, CBMySql sql) {
+	public CBInfo(CBGui gui, TS3Api api, CBLog log, CBMySql sql, TS3Query query) {
 		this.gui = gui;
 		this.api = api;
 		this.log = log;
 		this.sql = sql;
+		this.query = query;
 		this.defaultChannel = new CBChannel(this, api.whoAmI().getChannelId());
 		
 		new CBLoadKategorien(this);
@@ -299,5 +302,12 @@ public final class CBInfo {
 	 */
 	public void setRegelnChannel(CBChannel regelnChannel) {
 		this.regelnChannel = regelnChannel;
+	}
+
+	/**
+	 * @return the query
+	 */
+	public TS3Query getQuery() {
+		return query;
 	}
 }

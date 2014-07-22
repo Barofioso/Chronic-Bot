@@ -20,7 +20,7 @@
 		</plugins>
 	</build>
 	<properties>
-		<encoding>UTF-8</encoding>
+		<encoding>UTF8</encoding>
 	</properties>
 	<url>https://github.com/Barofioso/TeamSpeak-3-Java-API.git</url>
 </project>

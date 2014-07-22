@@ -1,2 +1,4 @@
 eclipse.preferences.version=1
-encoding/src=UTF-8
+encoding//src/com/cbbot/channel/CBDChannel.java=UTF-8
+encoding//src/com/cbbot/message/CBMessage.java=UTF-8
+encoding//src/com/cbbot/message/cmd/CBHelpMessage.java=cp1252

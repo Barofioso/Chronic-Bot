@@ -1,7 +1,5 @@
 package com.cbbot.message.cmd;
 
-import java.nio.charset.Charset;
-
 import com.cbbot.CBInfo;
 import com.cbbot.message.CBMessage;
 import com.cbbot.user.CBUser;
@@ -69,7 +67,8 @@ public class CBWelcomeMessage extends CBMessage{
 					"Es sind zurzeit [B]" + vsi.getClientsOnline() + "[/B] Clients Online \n" +
 					"Deine letzte Verbindung war am  " + info.getApi().getClientInfo(this.getUser().getClientID()).getLastConnectedDate().toString() + "\n";
 		
-		info.getApi().sendPrivateMessage(this.getUser().getClientID(), new String(message.getBytes(), Charset.forName("UTF-8")));
+		//info.getApi().sendPrivateMessage(this.getUser().getClientID(), new String(message.getBytes(), Charset.forName("UTF-8"))); //Funktioniert nur beding = ?
+		info.getApi().sendPrivateMessage(this.getUser().getClientID(), message); //Funktioniert nicht ? mit schwarzem hintergrund
 		info.getLog().addLogEntry("[Nachricht gesendet] " + "Avatar vom User: " + info.getApi().getClientInfo(this.getUser().getClientID()).getAvatar());
 	}
 }

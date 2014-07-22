@@ -16,7 +16,7 @@ public class CBStartBot implements ActionListener {
 	}
 
 	public void actionPerformed(ActionEvent e) {
-		new CBBot(this.gui, this.gui.getChckbxDebugToFile().isSelected(),this.gui.getChckbxServerEvent().isSelected(),this.gui.getChckbxChannelEvent().isSelected(),this.gui.getChckbxTextEvent().isSelected());
+		this.gui.setBot(new CBBot(this.gui, this.gui.getChckbxDebugToFile().isSelected(),this.gui.getChckbxServerEvent().isSelected(),this.gui.getChckbxChannelEvent().isSelected(),this.gui.getChckbxTextEvent().isSelected()));;
 		this.gui.getLblOffline().setForeground(Color.GREEN);
 		this.gui.getLblOffline().setText("Online");
 	}

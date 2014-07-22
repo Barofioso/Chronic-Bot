@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 
-import javax.swing.DropMode;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFrame;
@@ -25,6 +24,7 @@ import javax.swing.border.EmptyBorder;
 
 import org.eclipse.wb.swing.FocusTraversalOnArray;
 
+import com.cbbot.CBBot;
 import com.cbbot.gui.event.CBConfigLoad;
 import com.cbbot.gui.event.CBConfigSave;
 import com.cbbot.gui.event.CBExit;
@@ -55,12 +55,18 @@ public class CBGui extends JFrame {
 	private JCheckBox chckbxTextEvent;
 	private JLabel lblOffline;
 	private JTextField textTs3IP;
+	private JTabbedPane tabbedPane;
+	private CBBot bot = null;
 
 	/**
 	 * Launch the application.
-	 */
-	/*
+	 *//*
 	public static void main(String[] args) {
+		try {
+			UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
@@ -79,7 +85,7 @@ public class CBGui extends JFrame {
 	public CBGui() {
 		setTitle("Bot by Barofioso");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 550, 324);
+		setBounds(100, 100, 490, 324);
 		
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -95,7 +101,7 @@ public class CBGui extends JFrame {
 		contentPane.setLayout(new BorderLayout(0, 0));
 		setContentPane(contentPane);
 		
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
 		JScrollPane scrollPane = new JScrollPane();
@@ -104,8 +110,6 @@ public class CBGui extends JFrame {
 		tabbedPane.setEnabledAt(0, true);
 		
 		textConsole = new JTextPane();
-		textConsole.setForeground(Color.BLACK);
-		textConsole.setDropMode(DropMode.INSERT);
 		textConsole.setEditable(false);
 		scrollPane.setViewportView(textConsole);
 		
@@ -380,5 +384,20 @@ public class CBGui extends JFrame {
 	}
 	public JTextField getTextTs3IP() {
 		return textTs3IP;
+	}
+	public JTabbedPane getTabbedPane() {
+		return tabbedPane;
+	}
+	/**
+	 * @return the bot
+	 */
+	public CBBot getBot() {
+		return bot;
+	}
+	/**
+	 * @param bot the bot to set
+	 */
+	public void setBot(CBBot bot) {
+		this.bot = bot;
 	}
 }

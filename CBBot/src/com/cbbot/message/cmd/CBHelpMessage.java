@@ -25,7 +25,7 @@ public class CBHelpMessage extends CBMessage{
 	}
 	
 	private void sendMyInfoHelp() {
-		this.sendClientMessage(this.formatMessage("myInfo Hilfe", "Dies ist deine Ãœbersicht. Hier kannst du das Wichtigste Ã¼ber dich nachlesen"));		
+		this.sendClientMessage(this.formatMessage("myInfo Hilfe", "Dies ist deine Übersicht. Hier kannst du das Wichtigste Über dich nachlesen"));		
 	}
 	
 	private void sendWrongAgeHelp() {
@@ -33,7 +33,7 @@ public class CBHelpMessage extends CBMessage{
 				+ "\n"
 				+ "[B]Versuche es nocheinmal[/B]\n"
 				+ "\n"
-				+ "MÃ¶gliche eingaben: [B]25.12.1999[/B] oder [B]1999.12.25[/B]"));
+				+ "Mögliche eingaben: [B]25.12.1999[/B] oder [B]1999.12.25[/B]"));
 	}
 
 }

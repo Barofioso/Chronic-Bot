@@ -7,7 +7,7 @@ import com.github.theholywaffle.teamspeak3.api.ChannelProperty;
 /**
  * 
  * Chronic Bot Default Channel Klasse erstellt neue Channel
- * Der ChannelName  sowie prefix und suffix k��nnen gesetzt werden.
+ * Der ChannelName  sowie prefix und suffix können gesetzt werden.
  * Prefix ist davor, Suffix nach dem ChannelNamen
  *
  * @author D. Lehmann

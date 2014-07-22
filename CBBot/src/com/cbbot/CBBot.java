@@ -39,7 +39,8 @@ public class CBBot {
 							gui.getInputSQLUsername().getText(),
 							gui.getInputSQLPasswort().getText(),
 							gui.getInputSQLDatabase().getText(),
-							sqlPort));
+							sqlPort),
+							query);
 		
 		api.moveClient(this.info.getRegelnChannel().getChannelDatabaseID());
 		
