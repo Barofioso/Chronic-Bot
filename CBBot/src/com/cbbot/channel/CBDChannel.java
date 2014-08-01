@@ -18,9 +18,9 @@ import com.github.theholywaffle.teamspeak3.api.ChannelProperty;
  */
 public class CBDChannel {
 	
-	private char firstChannelPrefix 		= '╔';
-	private char middleChannelPrefix 		= '╠';
-	private char lastChannelPrefix 			= '╚';
+	private char firstChannelPrefix 		= '\u2554';
+	private char middleChannelPrefix 		= '\u2560';
+	private char lastChannelPrefix 			= '\u255A';
 	private String channelName;
 	private int type; // 1 = separizor, 2 = center, 3 = default, 4 = normal
 	private String prefix = ""; //prefix vor dem Channel

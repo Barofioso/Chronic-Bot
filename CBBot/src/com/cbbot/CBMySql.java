@@ -6,7 +6,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
+/**
+ * 
+ * Meine MySql klasse, damit ich auf einfachste weise mich mit der Datenbank verbinden kann
+ * Daten abfragen und setzen kann
+ *
+ * @author D. Lehmann
+ * @copyright D. Lehmann
+ *
+ * @version 0.0
+ *
+ */
 public class CBMySql {
 
 	

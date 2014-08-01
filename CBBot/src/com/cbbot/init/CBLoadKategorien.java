@@ -10,8 +10,9 @@ public class CBLoadKategorien extends CBLoad{
 	}
 
 	private void loadAll(CBInfo info) {
-		info.setAdminKat(new CBKategorie(info, "Admin"));
-		info.setNormalKat(new CBKategorie(info, "Normal"));
+		info.setAdminKat(new CBKategorie(info, CBKategorie.admin));
+		info.setNormalKat(new CBKategorie(info, CBKategorie.normal));
+		info.setGameKat(new CBKategorie(info, CBKategorie.game));
+		info.setClanKat(new CBKategorie(info, CBKategorie.clan));
 	}
-
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import com.cbbot.CBInfo;
 import com.cbbot.channel.CBChannel;
 import com.cbbot.channel.CBUserChannel;
+import com.cbbot.group.CBGameGroup;
 import com.cbbot.group.CBServerGroup;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelGroupClient;
@@ -24,7 +25,6 @@ public class CBUser {
 	private String clientNickname;
 	private String clientPlatform;
 	private String clientVersion;
-	private String clientIP;
 	private String clientAwayMessage;
 	private int currentChannel;
 	private boolean isAdmin;
@@ -32,6 +32,7 @@ public class CBUser {
 	private ArrayList<CBUserChannel> privateChannels = new ArrayList<CBUserChannel>();
 	private ArrayList<CBServerGroup> serverGroups = new ArrayList<CBServerGroup>();
 	private CBGeburtsdatum geburtsdatum = null;
+	private CBIp ipAdress;
 	/**
 	 * Erstellt direkt einen kompletten User mit allen Informationen,
 	 * es werden die ServerGruppen und die Datenbank ID dazugeladen
@@ -48,7 +49,6 @@ public class CBUser {
 		this.clientNickname = cInfo.getNickname().trim();
 		this.clientPlatform = cInfo.getPlatform();
 		this.clientVersion = cInfo.getVersion();
-		this.clientIP = cInfo.getIp();
 		this.clientAwayMessage = cInfo.getAwayMessage();
 		this.currentChannel = cInfo.getChannelId();
 		
@@ -59,8 +59,39 @@ public class CBUser {
 		this.checkBDay(info);
 		//Ist der User Admin?
 		this.isAdmin = this.checkAdmin(info);
+		
+		//Game Channel implementierung
+		this.addAllGameGroupMembers(info);
+		
+		//Aktualisiere den User
 		this.updateUser(info);
 	}
+	
+	public void addAllGameGroupMembers(CBInfo info){
+		for(int i = 0; i < serverGroups.size(); i++){
+			if(this.addGameGroupMember(info.getGameGroupByID(serverGroups.get(i).getGroupID()))){
+				info.getLog().addLogEntry("[GameGruppe] - User " + this.getClientNickname() + " aktualisiert");
+			}
+			else{
+				info.getLog().addLogEntry("[GameGruppe] - User " + this.getClientNickname() + " bereits dabei");
+			}
+		}		
+	}
+	/**
+	 * Füge für jede Servergruppe, die eine Spielgruppe ist, diesen Member hinzu, sofern dieser nicht vorhanden ist!
+	 * @param info Die Info klasse
+	 * @return True falls der User hinzugefügt wurde
+	 */
+	private boolean addGameGroupMember(CBGameGroup gameGroup){
+		if(gameGroup != null){
+			if(gameGroup.getMemberByDatabaseID(clientDatabaseID) == null){
+				gameGroup.getMembers().add(this);
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void checkBDay(CBInfo info) {
 		info.getSql().open();
 		ResultSet res = info.getSql().query("SELECT * FROM account WHERE a_ID = " + this.dbID + ";");
@@ -72,7 +103,7 @@ public class CBUser {
 					this.geburtsdatum = new CBGeburtsdatum(info, bDay, this);
 					//lol
 					info.getLog().addLogEntry("Geburtsdatum hinzugefügt: " + this.getGeburtsdatum().getDatum());
-					
+					break;
 				}
 			}
 		} catch (SQLException e) {
@@ -88,8 +119,8 @@ public class CBUser {
 	 */
 	private boolean checkAdmin(CBInfo info) {
 		for(int i = 0; i < this.getServerGroups().size(); i++){
-			for(int j = 0; j < this.getServerGroups().get(i).getKategorie().size(); j++){
-				if(this.getServerGroups().get(i).getKategorie().get(j).getkID() == info.getAdminKat().getkID()){
+			for(int j = 0; j < this.getServerGroups().get(i).getKategorien().size(); j++){
+				if(this.getServerGroups().get(i).getKategorien().get(j).getkID() == info.getAdminKat().getkID()){
 					return true;
 				}
 			}
@@ -160,8 +191,6 @@ public class CBUser {
 				+ this.clientPlatform
 				+ "', clientVersion = '"
 				+ this.clientVersion
-				+ "', clientIP = '"
-				+ this.clientIP
 				+ "', clientAM = '"
 				+ this.clientAwayMessage
 				+ "' WHERE a_ID = "
@@ -186,7 +215,6 @@ public class CBUser {
 				+ "clientName, "
 				+ "clientPlatform, "
 				+ "clientVersion, "
-				+ "clientIP, "
 				+ "clientAM "
 				+ ") VALUES "
 				+ "(" 
@@ -203,8 +231,6 @@ public class CBUser {
 				+ this.clientPlatform
 				+ "', '"
 				+ this.clientVersion
-				+ "', '"
-				+ this.clientIP
 				+ "', '"
 				+ this.clientAwayMessage
 				+ "');";
@@ -244,10 +270,6 @@ public class CBUser {
 		return clientVersion;
 	}
 
-	public String getClientIP() {
-		return clientIP;
-	}
-
 	public String getClientAwayMessage() {
 		return clientAwayMessage;
 	}
@@ -278,10 +300,6 @@ public class CBUser {
 
 	public void setClientVersion(String clientVersion) {
 		this.clientVersion = clientVersion;
-	}
-
-	public void setClientIP(String clientIP) {
-		this.clientIP = clientIP;
 	}
 
 	public void setClientAwayMessage(String clientAwayMessage) {
@@ -397,13 +415,32 @@ public class CBUser {
 		info.getSql().close();
 		return false;
 	}
-	public void loadPrivateChannels(CBInfo info) {
+	/**
+	 * Ladet alle Userchannel von diesem User
+	 * Die Privaten Channel von diesem User werden gesetzt
+	 * Dem UserChannel wird der Owner gesetzt falls dieser User der Owner/ersteller des Channels ist
+	 * Dem UserChannel wird immer der ChannelAdmin gesetzt 
+	 * @param info Die Info klasse mit allen wichtigen Informationen
+	 */
+	public void loadUserChannels(CBInfo info) {
 		TS3Api api = info.getApi();
-		 
+		
+		//Für jeden UserChannel
 		for(int i = 0; i < info.getUserChannels().size(); i++){
+			//Hole die ChannelGruppenListe des Channels
 			List<ChannelGroupClient> channelGroupClients = api.getChannelGroupClientsByChannelId(info.getUserChannels().get(i).getChannelDatabaseID());
+			//Für jeden Client in der ChannelGruppe des Channels
 			for(int j = 0; j < channelGroupClients.size(); j++){
+				//Wenn die TS3DB ID vom Channel Gruppen Client gleich dieser TS3DBID ist
 				if(channelGroupClients.get(j).getClientDatabaseId() == this.clientDatabaseID){
+					//Wenn dieser User der Ersteller des Channels ist
+					if(info.getUserChannels().get(i).checkOwner(info, this)){
+						//Setze diesen User als Owner dem UserChannel
+						info.getUserChannels().get(i).setOwner(this);
+					}
+					//Füge den ChannelMember diesen User hinzu
+					info.getUserChannels().get(i).getChannelAdmins().add(this);
+					//Füge der Person den Privaten Channel hinzu
 					this.privateChannels.add(info.getUserChannels().get(i));
 				}
 			}
@@ -414,6 +451,18 @@ public class CBUser {
 	}
 	public void setGeburtsdatum(CBGeburtsdatum geburtsdatum) {
 		this.geburtsdatum = geburtsdatum;
+	}
+	/**
+	 * @return the ipAdress
+	 */
+	public CBIp getIpAdress() {
+		return ipAdress;
+	}
+	/**
+	 * @param ipAdress the ipAdress to set
+	 */
+	public void setIpAdress(CBIp ipAdress) {
+		this.ipAdress = ipAdress;
 	}
 	
 }

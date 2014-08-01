@@ -6,7 +6,16 @@ import java.util.ArrayList;
 
 import com.cbbot.CBInfo;
 import com.cbbot.kategorie.CBKategorie;
-
+/**
+ * 
+ * Die Gruppen Klasse dient als Basis für alle Gruppen
+ *
+ * @author D. Lehmann
+ * @copyright D. Lehmann
+ *
+ * @version 0.0
+ *
+ */
 public class CBGroup {
 	
 	private int GroupDBID;	//Datenbank
@@ -16,7 +25,7 @@ public class CBGroup {
 	private int GroupSaveDB;
 	private int GroupSortID;
 	private int GroupKat;
-	private ArrayList<CBKategorie> kategorie = new ArrayList<CBKategorie>();
+	private ArrayList<CBKategorie> kategorien = new ArrayList<CBKategorie>();
 	private CBInfo info;
 	
 	public CBGroup(CBInfo info){
@@ -63,32 +72,38 @@ public class CBGroup {
 		GroupSortID = groupSortID;
 	}
 
-	public ArrayList<CBKategorie> getKategorie() {
-		return kategorie;
+	public ArrayList<CBKategorie> getKategorien() {
+		return kategorien;
 	}
 
 	public CBKategorie getKategorieByName(String name){
-		for(int i = 0; i < this.kategorie.size(); i++){
-			if(this.kategorie.get(i).getkName().equals(name)){
-				return this.kategorie.get(i);
+		for(int i = 0; i < this.kategorien.size(); i++){
+			if(this.kategorien.get(i).getkName().equals(name)){
+				return this.kategorien.get(i);
 			}
 		}
 		return null;
 	}
 	public CBKategorie getKategorieByID(int kID){
-		for(int i = 0; i < this.kategorie.size(); i++){
-			if(this.kategorie.get(i).getkID() == kID){
-				return this.kategorie.get(i);
+		for(int i = 0; i < this.kategorien.size(); i++){
+			if(this.kategorien.get(i).getkID() == kID){
+				return this.kategorien.get(i);
 			}
 		}
 		return null;
 	}
-	public void addKategorie(CBKategorie kat){
-		this.kategorie.add(kat);
+	public boolean addKategorie(CBKategorie kat){
+		for(int i = 0; i < kategorien.size(); i++){
+			if(kategorien.get(i).getkID() == kat.getkID()){
+				return false;
+			}
+		}
+		this.kategorien.add(kat);
+		return true;
 	}
 	
-	public void setKategorie(ArrayList<CBKategorie> kategorie) {
-		this.kategorie = kategorie;
+	public void setKategorien(ArrayList<CBKategorie> kategorie) {
+		this.kategorien = kategorie;
 	}
 
 	public int getGroupDBID() {
@@ -168,13 +183,17 @@ public class CBGroup {
 		}
 	}
 
+	public void updateGRKA(){
+		this.setGRKA();
+	}
 	private void setGRKA() {
-		for(int i = 0; i < this.kategorie.size(); i++){
-			if(!this.checkGRKA(this.kategorie.get(i))){
-				this.info.getSql().open();
-				String query = "INSERT INTO grka(g_ID,k_ID) VALUES (" + this.GroupDBID + "," + this.kategorie.get(i).getkID() + ");";
-				this.info.getSql().query(query);
-				this.info.getLog().addLogEntry("[Neue Gruppe mit einer neuen Kategorie] " + query);
+		for(int i = 0; i < this.kategorien.size(); i++){
+			if(!this.checkGRKA(this.kategorien.get(i))){
+				info.getSql().open();
+				String query = "INSERT INTO grka(g_ID,k_ID) VALUES (" + this.GroupDBID + "," + this.kategorien.get(i).getkID() + ");";
+				info.getSql().query(query);
+				info.getLog().addLogEntry("[Neue Gruppe mit einer neuen Kategorie] " + query);
+				info.getSql().close();
 			}
 		}
 		
@@ -195,6 +214,10 @@ public class CBGroup {
 		}
 		this.info.getSql().close();
 		return false;
+	}
+	
+	public boolean checkKategorie(CBKategorie kategorie){
+		return this.checkGRKA(kategorie);
 	}
 
 	public CBInfo getInfo() {

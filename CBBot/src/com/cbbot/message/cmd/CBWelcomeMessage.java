@@ -27,6 +27,11 @@ public class CBWelcomeMessage extends CBMessage{
 		if(userTC > 0){
 			float tmpE = ((100/serverTC)*userTC);
 			int count = 0;
+			int tmpV = 0;
+			if(tmpE > 1){
+				tmpV = (int) tmpE;
+				tmpE = tmpE-tmpV;
+			}
 			while(count < 1){
 				count = (int)(tmpE * 10 * m);
 				if(count + "".length() <= 9){
@@ -46,7 +51,14 @@ public class CBWelcomeMessage extends CBMessage{
 			int lange = prozent.length();
 			prozent = "";
 			for(int i = 0; i < lange; i++){
-				prozent += 0;
+				
+				if(tmpV != 0){
+					prozent += tmpV;
+				}
+				else{
+					prozent += 0;
+				}
+				
 				if(i == 0){
 					prozent += ".";
 				}

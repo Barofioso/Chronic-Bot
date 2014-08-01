@@ -6,6 +6,22 @@ import java.sql.SQLException;
 import com.cbbot.CBInfo;
 
 public class CBKategorie {
+	/**
+	 * Die Admin Kategorie
+	 */
+	public static final String admin = "Admin";
+	/**
+	 * Die Normale Kategorie
+	 */
+	public static final String normal = "Normal";
+	/**
+	 * Die Spiele Kategorie
+	 */
+	public static final String game = "Spiel";
+	/**
+	 * Die Clan Kategorie
+	 */
+	public static final String clan = "Clan";
 
 	private int kID;
 	private String kName;

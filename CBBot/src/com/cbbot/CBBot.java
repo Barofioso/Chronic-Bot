@@ -28,7 +28,7 @@ public class CBBot {
 		query.connect();
 		
 		TS3Api api = query.getApi();
-		api.selectVirtualServerById(1);
+		api.selectVirtualServerById(1);//Virtual ID für den TS3 Server zu bestimmen von der TS3 Instanz 1 = heiss | 8 = Test
 		api.setNickname("Chester"); //Station 99 - PutPutBot
 		//this.api.sendChannelMessage("PutPutBot is online!");
 		
@@ -42,7 +42,7 @@ public class CBBot {
 							sqlPort),
 							query);
 		
-		api.moveClient(this.info.getRegelnChannel().getChannelDatabaseID());
+		api.moveClient(info.getRegelnChannel().getChannelDatabaseID());
 		
 		//this.api.registerAllEvents();
 		if(serverEvent){
@@ -57,9 +57,9 @@ public class CBBot {
 			api.registerEvent(TS3EventType.TEXT_SERVER);
 		}
 		
-		api.addTS3Listeners(new CBTS3Listener(this.info));
+		api.addTS3Listeners(new CBTS3Listener(info));
 		
-		new CBLobbyEvent(this.info, 5);
+		new CBLobbyEvent(info, 5);
 	}
 	/**
 	 * @return the info

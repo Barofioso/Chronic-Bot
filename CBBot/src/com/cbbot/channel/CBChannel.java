@@ -6,7 +6,17 @@ import java.util.ArrayList;
 
 import com.cbbot.CBInfo;
 import com.github.theholywaffle.teamspeak3.api.wrapper.ChannelInfo;
-
+/**
+ * 
+ * Diese Klasse erstellt einen Channel anhand der Teamspeak 3 Informationen
+ * Speichert alle Informationen direkt in der MySql Datenbank
+ *
+ * @author D. Lehmann
+ * @copyright D. Lehmann
+ *
+ * @version 1.0
+ *
+ */
 public class CBChannel {
 
 	private int channelID; //DB MySql
@@ -30,12 +40,25 @@ public class CBChannel {
 	}
 	/**
 	 * Erstellt einen neuen Channel der kein UserChannel ist
-	 * @param bot Die Instanz
+	 * @param info Die Info klasse mit allen Informationen
 	 * @param channelDatabaseID Die Channel TS3 ID
 	 * @param isUserChannel Wenn true, dann werden auch die temporären Channel in der Datenbank gespeichert bzw. von der Datenbank geladen!
 	 */
 	public CBChannel(CBInfo info, int channelDatabaseID, boolean isUserChannel){
 		this.newCBChannel(info, channelDatabaseID, isUserChannel);
+	}
+	
+	/**
+	 * Ladet alle Channel Informationen neu
+	 */
+	public void reloadChannel(CBInfo info){
+		ChannelInfo ci = info.getApi().getChannelInfo(this.channelDatabaseID);
+		this.channelOrderID = ci.getOrder();
+		this.channelParentID = ci.getParentChannelId();
+		this.channelDescription = ci.getDescription();
+		this.channelName = ci.getName();
+		this.channelPassword = ci.getPassword();
+		this.channelTopic = ci.getTopic();
 	}
 	
 	private void newCBChannel(CBInfo info, int channelDatabaseID, boolean isUserChannel){
@@ -110,8 +133,7 @@ public class CBChannel {
 				+ "channelPassword = '" + this.channelPassword + "',"
 				+ "channelTopic = '" + this.channelTopic + "',"
 				+ "channelOrderID = " + this.channelOrderID + ", "
-				+ "channelParentID = " + this.channelParentID + ", "
-				+ "isUserChannel = " + this.isUserChannel + " " 
+				+ "channelParentID = " + this.channelParentID + " "
 				+ "WHERE channelDatabaseID = " + this.channelDatabaseID + ";");
 		info.getSql().close();
 	}

@@ -19,6 +19,7 @@ public class CBLobbyTimer extends TimerTask{
 	}
 
 	public void run() {
+		//Aktualisiere alle Channel mit den Usern (Info ist user in Channel?)
 		for(int i = 0; i < this.info.getUsers().size(); i++){
 			this.info.getUsers().get(i).setCurrentChannel(this.info.getApi().getClientInfo(this.info.getUsers().get(i).getClientID()).getChannelId());
 		}
@@ -37,7 +38,6 @@ public class CBLobbyTimer extends TimerTask{
 			CBChannel channel = new CBChannel(this.info, this.lobbyEvent.createLobbyTalkChannel());
 			this.info.getLobbyChannel().addSubChannel(channel);
 			this.info.getLog().addLogEntry("Lobby Channel als Subchannel hinzugefügt: " + channel.getChannelName());
-			
 		}
 		else if(this.info.getLobbyChannel().getSubChannels().size() > (channelWUser + 1) && this.info.getLobbyChannel().getSubChannels().size() > 4){
 			if(!(this.info.getLobbyChannel().getSubChannels().get(this.info.getLobbyChannel().getSubChannels().size()-1).isUserInChannel(info) > 0)){

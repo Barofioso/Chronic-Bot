@@ -14,7 +14,6 @@ public class CBGeburtsdatum {
 	
 	public CBGeburtsdatum(CBInfo info, String bDay, CBUser user){
 		this.setGeburtsdatum(info,user,bDay);
-		
 	}
 	/**
 	 * Wiedergibt das Alter in einer Dezimalzahl aus
@@ -28,7 +27,6 @@ public class CBGeburtsdatum {
 		}
 		return dJahr;
 	}
-	
 	/**
 	 * Legt das Geburtsdatum fest
 	 * @param user 
@@ -36,10 +34,10 @@ public class CBGeburtsdatum {
 	 * @param datum - String 10.11.1991 || 1991.11.10
 	 */
 	public void setGeburtsdatum(CBInfo info, CBUser user, String datum){
-		int i = datum.indexOf('.');
-		int day = Integer.parseInt(datum.substring(0,i));
-		int month = Integer.parseInt(datum.substring(i+1,i+3));
-		int year = Integer.parseInt(datum.substring(i+4, datum.length()));
+		
+		int day = Integer.parseInt(datum.substring(0,datum.indexOf('.')));
+		int month = Integer.parseInt(datum.substring(datum.indexOf('.') + 1, datum.indexOf(".", datum.indexOf('.') + 1)));
+		int year = Integer.parseInt(datum.substring(datum.indexOf(".", datum.indexOf('.') + 1) + 1, datum.length()));
 		
 		if(day > year){
 			int tmp = year;
@@ -59,7 +57,7 @@ public class CBGeburtsdatum {
 	}
 
 	private String formatSqlDate(GregorianCalendar bDay) {
-		return "" + bDay.get(1) + "-" + bDay.get(2) + "-" + bDay.get(5);  
+		return "" + bDay.get(1) + "-" + (bDay.get(2) + 1) + "-" + bDay.get(5);  
 	}
 
 	private boolean checkDB(CBInfo info, CBUser user, GregorianCalendar geburtsdatum) {
@@ -90,7 +88,7 @@ public class CBGeburtsdatum {
 		return this.geburtsdatum.get(1);
 	}
 	public int getGeburtsdatumMonth(){
-		return this.geburtsdatum.get(2);
+		return this.geburtsdatum.get(2) + 1;
 	}
 	public int getGeburtsdatumDay(){
 		return this.geburtsdatum.get(5);

@@ -34,15 +34,7 @@ public class CBLoadUserChannel extends CBLoad{
 				//Meine abfrage ob der User Online ist oder nicht
 				if(user != null && channelGroupClients.get(i).getChannelId() == userChannel.getChannelDatabaseID()){
 					//Füge diesen User dem Channel hinzu
-					userChannel.getChannelMember().add(user);
-					//Wenn der Channel einen Owner hat
-					if(userChannel.isHaveChannelOwner()){
-						//Prüfe nach ob der Owner dieser User ist
-						if(userChannel.checkOwner(info, user)){
-							//Setze den Owner diesem UserChannel
-							userChannel.setOwner(user);
-						}
-					}
+					userChannel.getChannelAdmins().add(user);
 					//Füge diesen UserChannel dem User mit der ChannelAdmin Gruppe hinzu
 					info.getUserByClientDatabaseID(channelGroupClients.get(i).getClientDatabaseId()).addPrivateChannel(userChannel);
 				}
@@ -51,8 +43,11 @@ public class CBLoadUserChannel extends CBLoad{
 			//Füge den Channel dem UserChannel Bereich hinzu
 			info.getUserChannels().add(userChannel);
 		}
+		//Für alle User channel
 		for(int i = 0; i < info.getUserChannels().size(); i++){
+			//Hole mir die ChannelGruppenClient Liste anhand des UserChannels
 			List<ChannelGroupClient> channelGroupClients = api.getChannelGroupClientsByChannelId(info.getUserChannels().get(i).getChannelDatabaseID());
+			//solange j kleiner als die ChannelGruppen Liste ist
 			for(int j = 0; j < channelGroupClients.size(); j++){
 				//Erstelle die Fehlenden einträge
 				info.getUserChannels().get(i).createDB(info);

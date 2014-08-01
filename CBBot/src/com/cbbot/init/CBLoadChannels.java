@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.cbbot.CBInfo;
 import com.cbbot.channel.CBChannel;
+import com.cbbot.channel.CBUserChannel;
 import com.github.theholywaffle.teamspeak3.TS3Api;
 import com.github.theholywaffle.teamspeak3.api.wrapper.Channel;
 
@@ -27,6 +28,7 @@ public class CBLoadChannels extends CBLoad{
 		for(int i = 0; i < info.getChannels().size(); i++){
 			info.getChannels().get(i).loadSubChannel(info);
 		}
+		//Standard Channels
 		for(int i = 0; i < info.getChannels().size(); i++){
 			if(info.getChannels().get(i).getChannelName().contains("=====[ Regeln ]=====")){
 				info.setRegelnChannel(info.getChannels().get(i));
@@ -43,6 +45,12 @@ public class CBLoadChannels extends CBLoad{
 			if(info.getChannels().get(i).getChannelName().contains("=====[ AFK ]=====")){
 				info.setAfkChannel(info.getChannels().get(i));
 			}
+		}
+		//User Channels
+		for(int i = 0; i < info.getUserChannel().getSubChannels().size(); i++){
+			CBUserChannel userChannel = new CBUserChannel(info, info.getUserChannel().getSubChannels().get(i).getChannelDatabaseID());
+			info.getUserChannels().add(userChannel);
+			info.getLog().addLogEntry("UserChannel Name: " + userChannel.getChannelName() + " ID: " + userChannel.getChannelDatabaseID());
 		}
 	}
 }

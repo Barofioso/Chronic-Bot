@@ -18,6 +18,13 @@ public class CBHelpMessage extends CBMessage{
 		if(param.contains("wrongage")){
 			this.sendWrongAgeHelp();
 		}
+		if(param.contains("hasage")){
+			this.sendHasAgeHelp();
+		}
+	}
+
+	private void sendHasAgeHelp() {
+		this.sendClientMessage(this.formatMessage("Alter", "Du hast bereits ein Geburtsdatum eingegeben"));
 	}
 
 	private void sendErrorHelp() {

@@ -22,7 +22,6 @@ public class CBAgeMessage extends CBMessage{
 		String message ="Bitte gebe dein Alter in form deines Geburtstages an:\n"
 				+ " Beispiel: [b]!alter 10.11.1991[/b]\n";
 		this.sendClientMessage(this.formatMessage("Alter", message));
-		
 	}
 	
 	private void addClientToAgeGroup(CBInfo info, CBGeburtsdatum bDay, CBUser user){
